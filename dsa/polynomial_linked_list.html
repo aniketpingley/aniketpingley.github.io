@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Representation Using Linked List Tutorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 5px;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre {
+            overflow-x: auto;
+        }
+
+        h2, h3, h4 {
+            margin-top: 30px;
+        }
+
+        h2 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: #333;
+        }
+
+        a:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Polynomial Representation Using Linked List Tutorial</h1>
+        <p><em>By <a href="https://www.linkedin.com/in/aspingley/">Aniket Pingley, Ph.D.</a></em></p>
+
+        <h2>Introduction</h2>
+        <p>A polynomial is a mathematical expression consisting of terms with variables and constants. A linked list is a data structure that consists of a sequence of elements, where each element points to the next element. In this tutorial, we will explore how to represent a polynomial using a linked list in C.</p>
+
+        <h2>Linked List Representation</h2>
+        <p>In a linked list, each element is called a node. Each node contains a value and a pointer to the next node in the list. The first node in the list is called the head.</p>
+
+        <h2>Polynomial Representation</h2>
+<p>A polynomial can be represented using a linked list, where each node represents a term of the polynomial. A term consists of a coefficient and an exponent. For example, the polynomial <code>3x<sup>2</sup> - 5x + 6</code> can be represented as the linked list:</p>
+<pre>
+        +---+    +---+    +---+
+Head -> | 6 | -> | -5 | -> | 3 | -> NULL
+        +---+    +---+    +---+
+</pre>
+
+<p>Another example, <code>4x<sup>3</sup> + 2x<sup>2</sup> + 7</code> would be represented as:</p>
+<pre>
+        +---+    +---+    +---+
+Head -> | 4 | -> | 2 | -> | 7 | -> NULL
+        +---+    +---+    +---+
+</pre>
+
+<p><em>Note:</em> In this representation, the nodes are arranged in decreasing order of exponents.</p>
+
+
+        <h2>Implementation in C</h2>
+        <p>We can implement the polynomial linked list in C using structures and dynamic memory allocation. Below is the C code:</p>
+        <pre>
+        <code>
+        /* C code for polynomial representation using linked list */
+
+        #include &lt;stdio.h>
+        #include &lt;stdlib.h>
+
+        // Define a node structure for the polynomial
+        typedef struct PolynomialTerm {
+            int coefficient;
+            int exponent;
+            struct PolynomialTerm* next;
+        } PolynomialTerm;
+
+        // Function to insert a new term into the polynomial
+        // This function takes the head of the polynomial linked list and inserts a new term into the list while maintaining the list in sorted order based on the exponent.
+        // The function returns the head of the updated list after insertion.
+
+        PolynomialTerm* insertTerm(PolynomialTerm* polynomial, int coefficient, int exponent) {
+            // Allocate memory for the new term
+            PolynomialTerm* newTerm = (PolynomialTerm*) malloc(sizeof(PolynomialTerm));
+            // Check if memory allocation was successful
+            if (newTerm == NULL) {
+                fprintf(stderr, "Memory allocation failed\n"); // Print a message to the screen indicating memory allocation failed
+                exit(1);
+            }
+
+            // Initialize the new term
+            newTerm-&gt;coefficient = coefficient;
+            newTerm-&gt;exponent = exponent;
+            newTerm-&gt;next = NULL;
+
+            // Find the correct position to insert the new term in the polynomial
+            PolynomialTerm* current = polynomial;
+            PolynomialTerm* previous = NULL;
+            while (current != NULL && current-&gt;exponent > exponent) {
+                previous = current;
+                current = current-&gt;next;
+            }
+
+            // Insert the new term into the polynomial
+            if (previous == NULL) {
+                newTerm-&gt;next = polynomial;
+                polynomial = newTerm;
+            } else {
+                previous-&gt;next = newTerm;
+                newTerm-&gt;next = current;
+            }
+            
+            return polynomial;
+        }
+
+        // Function to print the polynomial
+        // This function takes the head of the polynomial linked list and prints the polynomial in a human-readable format.
+        void printPolynomial(PolynomialTerm* polynomial) {
+            PolynomialTerm* current = polynomial;
+            while (current != NULL) {
+                printf("%dx^%d ", current-&gt;coefficient, current-&gt;exponent);
+                if (current-&gt;next != NULL &amp;&amp; current-&gt;next-&gt;coefficient >= 0) {
+                    printf("+ ");
+                }
+                current = current-&gt;next;
+            }
+            printf("\n");
+        }
+
+        // Function to delete the polynomial
+        // This function takes the head of the polynomial linked list and deallocates the memory used by the list.
+        void deletePolynomial(PolynomialTerm* polynomial) {
+            PolynomialTerm* current = polynomial;
+            while (current != NULL) {
+                PolynomialTerm* next = current-&gt;next;
+                free(current);
+                current = next;
+            }
+        }
+
+        int main() {
+            PolynomialTerm* polynomial = NULL;
+
+            polynomial = insertTerm(polynomial, 3, 4);
+            polynomial = insertTerm(polynomial, -5, 3);
+            polynomial = insertTerm(polynomial, 2, 1);
+            polynomial = insertTerm(polynomial, 6, 0);
+
+            printPolynomial(polynomial);
+
+            deletePolynomial(polynomial);
+
+            return 0;
+        }
+        </code>
+        </pre>
+
+        <h2>Pseudocode</h2>
+        <p>Below is the pseudocode for the implementation:</p>
+        <pre>
+        <code>
+        // Function to insert a new term into the polynomial
+        Function insertTerm(polynomial, coefficient, exponent) {
+            // Create a new term
+            newTerm = createNode(coefficient, exponent)
+
+            // Find the correct position to insert the new term in the polynomial
+            current = polynomial
+            previous = NULL
+            while (current != NULL and current.exponent > exponent) {
+                previous = current
+                current = current.next
+            }
+
+            // Insert the new term into the polynomial
+            if (previous == NULL) {
+                newTerm.next = polynomial
+                polynomial = newTerm
+            } else {
+                previous.next = newTerm
+                newTerm.next = current
+            }
+            
+            return polynomial
+        }
+
+        // Function to create a new node
+        Function createNode(coefficient, exponent) {
+            node = new Node()
+            node.coefficient = coefficient
+            node.exponent = exponent
+            node.next = NULL
+
+            return node
+        }
+        </code>
+        </pre>
+
+        <h2>Conclusion</h2>
+        <p>In this tutorial, we explored how to represent a polynomial using a linked list in C. By representing a polynomial as a linked list, we can easily manipulate and perform operations on polynomials in a programmatic way.</p>
+    </div>
+</body>
+</html>
