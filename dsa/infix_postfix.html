@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infix to Postfix Converter with Manual Step-by-Step Demo</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .container {
+        text-align: center;
+    }
+    input[type="text"] {
+        padding: 8px;
+        margin: 5px;
+        width: 300px;
+    }
+    button {
+        padding: 8px 20px;
+        margin: 5px;
+        cursor: pointer;
+    }
+    #output {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    #stack {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<p><em>By <a href="https://www.linkedin.com/in/aspingley/">Aniket Pingley, Ph.D.</a></em></p>
+
+<div class="container">
+    <h1>Infix to Postfix Converter with Manual Step-by-Step Demo</h1>
+    <input type="text" id="infixExpression" placeholder="Enter Infix Expression">
+    <button onclick="startDemo()">Start Demo</button> &nbsp;&nbsp;&nbsp;
+    <button onclick="step()">Next Step</button>
+    <div id="output"></div>
+    <div id="stack"></div>
+</div>
+
+<script>
+    let infixExpression;
+    let currentIndex;
+    let output;
+    let stack;
+    let precedence = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '/': 2
+    };
+
+    function startDemo() {
+        infixExpression = document.getElementById('infixExpression').value;
+        currentIndex = 0;
+        output = [];
+        stack = [];
+        displayStep();
+    }
+
+    function step() {
+        if (currentIndex < infixExpression.length) {
+            let token = infixExpression[currentIndex];
+
+            if (token.match(/[a-zA-Z0-9]/)) {
+                output.push(token);
+                currentIndex++;
+            } else if (token === '(') {
+                stack.push(token);
+                currentIndex++;
+            } else if (token === ')') {
+                while (stack.length && stack[stack.length - 1] !== '(') {
+                    output.push(stack.pop());
+                }
+                stack.pop(); // Discard '('
+                currentIndex++;
+            } else {
+                while (stack.length && precedence[stack[stack.length - 1]] >= precedence[token]) {
+                    output.push(stack.pop());
+                }
+                stack.push(token);
+                currentIndex++;
+            }
+            displayStep();
+        } else {
+            // Process remaining operators in the stack
+            while (stack.length) {
+                output.push(stack.pop());
+            }
+            displayStep();
+            displayResult();
+        }
+    }
+
+    function displayStep() {
+        let outputDiv = document.getElementById('output');
+        let stackDiv = document.getElementById('stack');
+
+        outputDiv.innerText = "Output: " + output.join('');
+        stackDiv.innerText = "Stack: " + stack.join(' ');
+        outputDiv.innerHTML += "<br>Current Token: " + (currentIndex < infixExpression.length ? infixExpression[currentIndex] : '');
+    }
+
+    function displayResult() {
+        let outputDiv = document.getElementById('output');
+        let stackDiv = document.getElementById('stack');
+
+        outputDiv.innerHTML += "<br><br>Final Postfix Expression: " + output.join('');
+        stackDiv.innerText = "Stack: "; // Clear stack display
+    }
+</script>
+
+</body>
+</html>
